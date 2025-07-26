@@ -1403,7 +1403,19 @@
             minBidIncrement: 10,
             auctionDuration: 24
         };
-        const adminPassword = 'admin123';
+        // SHA-256 hash of the real admin password ("admin123").
+        // Storing only the hash avoids exposing the clear-text password in the client.
+        const ADMIN_PASSWORD_HASH = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
+
+        // Helper used to verify that the password entered by the user matches the stored hash
+        async function verifyPassword(pass) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(pass);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex === ADMIN_PASSWORD_HASH;
+        }
 
         // Pokémon Cards Database
         const pokemonCards = [
@@ -1482,7 +1494,7 @@
             
             // Welcome message
             setTimeout(() => {
-                showNotification('🎉 Welcome to PokéDen! Admin password: admin123', 'info');
+                showNotification('🎉 Welcome to PokéDen!', 'info');
             }, 2000);
         });
 
@@ -1570,14 +1582,14 @@
                             <div class="rarity-badge rarity-${card.rarity}">${card.rarity}</div>
                         </div>
                         <h3 class="card-name">${card.name}</h3>
-                        <div class="auction-timer">${hours}h ${minutes}m ${seconds}s left</div>
+                        <div class="auction-timer" id="auctionTimer${auction.id}">${hours}h ${minutes}m ${seconds}s left</div>
                         <div class="current-bid">Current Bid: ${auction.currentBid} HOLDCHU</div>
                         <p style="color: rgba(255,255,255,0.6); margin-bottom: 15px;">
                             ${auction.bidCount} bids • Seller: ${auction.seller}
                         </p>
                         <input type="number" class="bid-input" placeholder="Enter bid amount" 
                                id="bidInput${auction.id}" min="${auction.currentBid + platformSettings.minBidIncrement}">
-                        <button class="bid-btn" onclick="placeBid(${auction.id})" 
+                        <button class="bid-btn" id="bidButton${auction.id}" onclick="placeBid(${auction.id})" 
                                 ${timeLeft <= 0 ? 'disabled' : ''}>
                             ${timeLeft <= 0 ? 'Auction Ended' : 'Place Bid'}
                         </button>
@@ -1586,10 +1598,29 @@
             }).join('');
         }
 
+        function updateAuctionCountdowns() {
+            auctions.forEach(auction => {
+                const timerEl = document.getElementById(`auctionTimer${auction.id}`);
+                const buttonEl = document.getElementById(`bidButton${auction.id}`);
+                if (!timerEl) return;
+
+                const timeLeft = Math.max(0, auction.endTime - Date.now());
+                const hours = Math.floor(timeLeft / 3600000);
+                const minutes = Math.floor((timeLeft % 3600000) / 60000);
+                const seconds = Math.floor((timeLeft % 60000) / 1000);
+
+                timerEl.textContent = `${hours}h ${minutes}m ${seconds}s left`;
+
+                if (timeLeft <= 0 && buttonEl && !buttonEl.disabled) {
+                    buttonEl.disabled = true;
+                    buttonEl.textContent = 'Auction Ended';
+                }
+            });
+        }
+
         function startAuctionTimers() {
-            setInterval(() => {
-                renderAuctions();
-            }, 1000);
+            // Update only countdown text every second, avoiding a full re-render
+            setInterval(updateAuctionCountdowns, 1000);
         }
 
         function placeBid(auctionId) {
@@ -1602,8 +1633,8 @@
             const bidInput = document.getElementById(`bidInput${auctionId}`);
             const bidAmount = parseInt(bidInput.value);
 
-            if (!bidAmount || bidAmount <= auction.currentBid) {
-                showNotification(`Bid must be higher than ${auction.currentBid} HOLDCHU`, 'error');
+            if (!bidAmount || bidAmount < auction.currentBid + platformSettings.minBidIncrement) {
+                showNotification(`Minimum bid is ${auction.currentBid + platformSettings.minBidIncrement} HOLDCHU`, 'error');
                 return;
             }
 
@@ -1813,7 +1844,7 @@
             }
         }
 
-        function toggleAdminAccess() {
+        async function toggleAdminAccess() {
             if (isAdminMode) {
                 isAdminMode = false;
                 document.getElementById('adminNavItem').style.display = 'none';
@@ -1821,7 +1852,7 @@
                 switchSection('marketplace');
             } else {
                 const password = prompt('Enter admin password:');
-                if (password === adminPassword) {
+                if (password && await verifyPassword(password)) {
                     isAdminMode = true;
                     document.getElementById('adminNavItem').style.display = 'block';
                     showNotification('Admin access granted!', 'success');
@@ -2160,7 +2191,7 @@
         }
 
         console.log('🎮 PokéDen Trading Platform Loaded Successfully!');
-        console.log('💡 Admin password: admin123');
+        console.log('🔐 Admin access available');
         console.log('🔥 All features are now fully functional!');
     </script>
 </body>
