@@ -1,0 +1,27 @@
+{
+  "test_start_time": "2025-07-26T12:12:13.792352",
+  "base_url": "https://mybird.app",
+  "connectivity": "success",
+  "response_time": 0.7,
+  "status_code": 200,
+  "content_size": 11735,
+  "links_found": 1,
+  "buttons_found": 0,
+  "forms_found": 0,
+  "interactive_elements": [
+    {
+      "type": "link",
+      "tag": "a",
+      "href": "https://lovable.dev/projects/b3dc2d33-2997-4e9f-be1d-d52436ab3b56?utm_source=lovable-badge",
+      "onclick": null,
+      "text": ""
+    }
+  ],
+  "potential_issues": [
+    "Missing expected functions: ['switchSection', 'toggleAdminAccess', 'toggleWalletOptions', 'connectWallet', 'createTrade', 'addNewCard', 'saveSettings', 'toggleCart', 'checkout', 'switchAdminTab', 'addToCart', 'placeBid', 'acceptTrade', 'declineTrade']",
+    "Mixed content warning - HTTP resources on HTTPS site"
+  ],
+  "recommendations": [],
+  "javascript_functions": [],
+  "test_end_time": "2025-07-26T12:12:14.489573"
+}
