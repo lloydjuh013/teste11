@@ -1,0 +1,118 @@
+{
+  "test_start_time": "2025-07-26T12:13:34.946794",
+  "live_website": {
+    "accessible": true,
+    "status_code": 200,
+    "content_size": 11735,
+    "links": {
+      "external_links": [
+        "https://mybird.app/",
+        "https://lovable.dev/projects/b3dc2d33-2997-4e9f-be1d-d52436ab3b56?utm_source=lovable-badge"
+      ],
+      "internal_links": [
+        "/assets/index-Inad8cm1.css"
+      ],
+      "onclick_handlers": [],
+      "form_actions": [],
+      "image_sources": [],
+      "script_sources": [
+        "/assets/index-BBrFgit1.js",
+        "https://mybird.app/~flock.js"
+      ],
+      "css_links": [
+        "/assets/index-Inad8cm1.css"
+      ]
+    },
+    "total_links": 6
+  },
+  "local_file": {
+    "accessible": true,
+    "file_size": 83061,
+    "links": {
+      "external_links": [],
+      "internal_links": [],
+      "onclick_handlers": [
+        "switchSection(",
+        "switchSection(",
+        "switchSection(",
+        "switchSection(",
+        "showNotification(",
+        "toggleAdminAccess()",
+        "toggleWalletOptions()",
+        "connectWallet(",
+        "connectWallet(",
+        "connectWallet(",
+        "createTrade()",
+        "switchAdminTab(",
+        "switchAdminTab(",
+        "switchAdminTab(",
+        "switchAdminTab(",
+        "addNewCard()",
+        "saveSettings()",
+        "toggleCart()",
+        "checkout()",
+        "toggleCart()",
+        "addToCart(${product.id})",
+        "initiateTradeForCard(${product.id})",
+        "toggleWishlist(${product.id})",
+        "placeBid(${auction.id})",
+        "acceptTrade(${trade.id})",
+        "declineTrade(${trade.id})",
+        "toggleUserStatus(${user.id})",
+        "editCard(${card.id})",
+        "updateQuantity(${item.id}, -1)",
+        "updateQuantity(${item.id}, 1)",
+        "removeFromCart(${item.id})",
+        "changePage(${currentPage - 1})",
+        "changePage(${i})",
+        "changePage(${currentPage + 1})"
+      ],
+      "form_actions": [],
+      "image_sources": [],
+      "script_sources": [],
+      "css_links": []
+    },
+    "total_links": 34
+  },
+  "comparison": {
+    "live_links": 6,
+    "local_links": 34,
+    "difference": -28
+  },
+  "link_checks": [
+    {
+      "source": "live website",
+      "external_links_tested": 2,
+      "external_links_total": 2,
+      "results": [
+        {
+          "url": "https://mybird.app/",
+          "result": {
+            "status": "success",
+            "status_code": 200,
+            "content_type": "text/html; charset=utf-8",
+            "accessible": true
+          }
+        },
+        {
+          "url": "https://lovable.dev/projects/b3dc2d33-2997-4e9f-be1d-d52436ab3b56?utm_source=lovable-badge",
+          "result": {
+            "status": "success",
+            "status_code": 200,
+            "content_type": "text/html; charset=utf-8",
+            "accessible": true
+          }
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "live_website_accessible": true,
+    "local_file_accessible": true,
+    "total_external_links_tested": 2,
+    "working_external_links": 2,
+    "broken_external_links": 0,
+    "success_rate": 100.0
+  },
+  "test_end_time": "2025-07-26T12:13:37.857017"
+}
