@@ -1403,7 +1403,19 @@
             minBidIncrement: 10,
             auctionDuration: 24
         };
-        const adminPassword = 'admin123';
+        // Simple hash of admin password for basic security (still not production-ready)
+        const adminPasswordHash = '39c43b7d';
+        
+        // Simple hash function for password verification
+        function simpleHash(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32bit integer
+            }
+            return Math.abs(hash).toString(16);
+        }
 
         // Pokémon Cards Database
         const pokemonCards = [
@@ -1482,7 +1494,7 @@
             
             // Welcome message
             setTimeout(() => {
-                showNotification('🎉 Welcome to PokéDen! Admin password: admin123', 'info');
+                showNotification('🎉 Welcome to PokéDen! Contact admin for access credentials.', 'info');
             }, 2000);
         });
 
@@ -1600,9 +1612,15 @@
 
             const auction = auctions.find(a => a.id === auctionId);
             const bidInput = document.getElementById(`bidInput${auctionId}`);
-            const bidAmount = parseInt(bidInput.value);
+            const bidAmount = parseInt(bidInput.value, 10);
 
-            if (!bidAmount || bidAmount <= auction.currentBid) {
+            // Proper validation for bid amount
+            if (isNaN(bidAmount) || bidAmount <= 0) {
+                showNotification('Please enter a valid positive number for your bid.', 'error');
+                return;
+            }
+
+            if (bidAmount <= auction.currentBid) {
                 showNotification(`Bid must be higher than ${auction.currentBid} HOLDCHU`, 'error');
                 return;
             }
@@ -1784,8 +1802,8 @@
             const duration = document.getElementById('auctionDuration').value;
 
             platformSettings.fee = parseFloat(fee);
-            platformSettings.minBidIncrement = parseInt(increment);
-            platformSettings.auctionDuration = parseInt(duration);
+            platformSettings.minBidIncrement = parseInt(increment, 10);
+            platformSettings.auctionDuration = parseInt(duration, 10);
 
             showNotification('Settings saved successfully!', 'success');
         }
@@ -1821,7 +1839,7 @@
                 switchSection('marketplace');
             } else {
                 const password = prompt('Enter admin password:');
-                if (password === adminPassword) {
+                if (password && simpleHash(password) === adminPasswordHash) {
                     isAdminMode = true;
                     document.getElementById('adminNavItem').style.display = 'block';
                     showNotification('Admin access granted!', 'success');
@@ -1982,7 +2000,7 @@
             // Update stats
             const completedTradesElement = document.getElementById('completedTrades');
             if (completedTradesElement) {
-                completedTradesElement.textContent = (parseInt(completedTradesElement.textContent) + 1).toString();
+                completedTradesElement.textContent = (parseInt(completedTradesElement.textContent, 10) + 1).toString();
             }
 
             cart = [];
@@ -2023,7 +2041,7 @@
 
                 let matchesPrice = true;
                 if (price) {
-                    const [min, max] = price.includes('+') ? [parseInt(price), Infinity] : price.split('-').map(Number);
+                    const [min, max] = price.includes('+') ? [parseInt(price, 10), Infinity] : price.split('-').map(Number);
                     matchesPrice = product.price >= min && (max === undefined || product.price <= max);
                 }
 
@@ -2160,7 +2178,7 @@
         }
 
         console.log('🎮 PokéDen Trading Platform Loaded Successfully!');
-        console.log('💡 Admin password: admin123');
+                    console.log('💡 Admin access available - contact administrator for credentials');
         console.log('🔥 All features are now fully functional!');
     </script>
 </body>
